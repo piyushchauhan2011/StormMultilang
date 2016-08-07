@@ -60,18 +60,22 @@ public class WordCountTopology {
 
         builder.setSpout("spout", new RandomSentenceSpout(), 5);
 
-        builder.setBolt("split", new SplitSentence(), 8).shuffleGrouping("spout");
+        SplitSentence pythonSplit = new SplitSentence();
+        Map env = new HashMap();
+        env.put("PYTHONPATH", "/home/ec2-user/StormMultilang/src/main/java/org/piyush/resources/");
+        pythonSplit.setEnv(env);
+
+        builder.setBolt("split", pythonSplit, 8).shuffleGrouping("spout");
         builder.setBolt("count", new WordCount(), 12).fieldsGrouping("split", new Fields("word"));
 
         Config conf = new Config();
         conf.setDebug(true);
-        
+
         if (args != null && args.length > 0) {
             conf.setNumWorkers(3);
 
             StormSubmitter.submitTopologyWithProgressBar(args[0], conf, builder.createTopology());
-        }
-        else {
+        } else {
             conf.setMaxTaskParallelism(3);
 
             LocalCluster cluster = new LocalCluster();
