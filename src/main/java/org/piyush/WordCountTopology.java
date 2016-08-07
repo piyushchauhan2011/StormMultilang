@@ -13,7 +13,6 @@ import org.apache.storm.topology.base.BaseBasicBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
-import org.piyush.RandomSentenceSpout;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,7 +65,7 @@ public class WordCountTopology {
 
         Config conf = new Config();
         conf.setDebug(true);
-
+        
         if (args != null && args.length > 0) {
             conf.setNumWorkers(3);
 
