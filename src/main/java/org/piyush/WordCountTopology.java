@@ -60,12 +60,12 @@ public class WordCountTopology {
 
         builder.setSpout("spout", new RandomSentenceSpout(), 5);
 
-        SplitSentence pythonSplit = new SplitSentence();
-        Map env = new HashMap();
-        env.put("PYTHONPATH", "/home/ec2-user/StormMultilang/src/main/java/org/piyush/resources/");
-        pythonSplit.setEnv(env);
+//        SplitSentence pythonSplit = new SplitSentence();
+//        Map env = new HashMap();
+//        env.put("PYTHONPATH", "/home/ec2-user/StormMultilang/src/main/java/org/piyush/resources/");
+//        pythonSplit.setEnv(env);
 
-        builder.setBolt("split", pythonSplit, 8).shuffleGrouping("spout");
+        builder.setBolt("split", new SplitSentence(), 8).shuffleGrouping("spout");
         builder.setBolt("count", new WordCount(), 12).fieldsGrouping("split", new Fields("word"));
 
         Config conf = new Config();
