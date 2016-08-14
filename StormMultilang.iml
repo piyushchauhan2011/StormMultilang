@@ -11,7 +11,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:3.8.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.storm:storm-core:1.0.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.storm:storm-core:1.0.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.esotericsoftware:kryo:3.0.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.esotericsoftware:reflectasm:1.10.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm:5.0.3" level="project" />
@@ -25,5 +25,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:log4j-over-slf4j:1.6.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-api:1.7.7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.storm:flux-core:1.0.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-cli:commons-cli:1.2" level="project" />
   </component>
 </module>
