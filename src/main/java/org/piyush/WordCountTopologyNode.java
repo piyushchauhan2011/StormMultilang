@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,22 +35,20 @@ import java.util.Map;
  * This topology demonstrates Storm's stream groupings and multilang capabilities.
  */
 public class WordCountTopologyNode {
-  public static class SplitSentence extends ShellBolt implements IRichBolt {
+    public static class SplitSentence extends ShellBolt implements IRichBolt {
 
-    public SplitSentence() {
-      super("node", "splitsentence.js");
-    }
+        public SplitSentence() {
+            super("node", "splitsentence.js");
+        }
 
-    @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {
-      declarer.declare(new Fields("word"));
-    }
+        public void declareOutputFields(OutputFieldsDeclarer declarer) {
+            declarer.declare(new Fields("word"));
+        }
 
-    @Override
-    public Map<String, Object> getComponentConfiguration() {
-      return null;
+        public Map<String, Object> getComponentConfiguration() {
+            return null;
+        }
     }
-  }
 
     public static class RandomSentence extends ShellSpout implements IRichSpout {
 
@@ -58,64 +56,59 @@ public class WordCountTopologyNode {
             super("node", "randomsentence.js");
         }
 
-        @Override
         public void declareOutputFields(OutputFieldsDeclarer declarer) {
             declarer.declare(new Fields("word"));
         }
 
-        @Override
         public Map<String, Object> getComponentConfiguration() {
             return null;
         }
     }
 
-  public static class WordCount extends BaseBasicBolt {
-    Map<String, Integer> counts = new HashMap<String, Integer>();
+    public static class WordCount extends BaseBasicBolt {
+        Map<String, Integer> counts = new HashMap<String, Integer>();
 
-    @Override
-    public void execute(Tuple tuple, BasicOutputCollector collector) {
-      String word = tuple.getString(0);
-      Integer count = counts.get(word);
-      if (count == null)
-        count = 0;
-      count++;
-      counts.put(word, count);
-      collector.emit(new Values(word, count));
+        public void execute(Tuple tuple, BasicOutputCollector collector) {
+            String word = tuple.getString(0);
+            Integer count = counts.get(word);
+            if (count == null)
+                count = 0;
+            count++;
+            counts.put(word, count);
+            collector.emit(new Values(word, count));
+        }
+
+        public void declareOutputFields(OutputFieldsDeclarer declarer) {
+            declarer.declare(new Fields("word", "count"));
+        }
     }
 
-    @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {
-      declarer.declare(new Fields("word", "count"));
+    public static void main(String[] args) throws Exception {
+
+        TopologyBuilder builder = new TopologyBuilder();
+
+        builder.setSpout("spout", new RandomSentence(), 5);
+
+        builder.setBolt("split", new SplitSentence(), 8).shuffleGrouping("spout");
+        builder.setBolt("count", new WordCount(), 12).fieldsGrouping("split", new Fields("word"));
+
+        Config conf = new Config();
+        conf.setDebug(true);
+
+
+        if (args != null && args.length > 0) {
+            conf.setNumWorkers(3);
+
+            StormSubmitter.submitTopologyWithProgressBar(args[0], conf, builder.createTopology());
+        } else {
+            conf.setMaxTaskParallelism(3);
+
+            LocalCluster cluster = new LocalCluster();
+            cluster.submitTopology("word-count", conf, builder.createTopology());
+
+            Thread.sleep(10000);
+
+            cluster.shutdown();
+        }
     }
-  }
-
-  public static void main(String[] args) throws Exception {
-
-    TopologyBuilder builder = new TopologyBuilder();
-
-    builder.setSpout("spout", new RandomSentence(), 5);
-
-    builder.setBolt("split", new SplitSentence(), 8).shuffleGrouping("spout");
-    builder.setBolt("count", new WordCount(), 12).fieldsGrouping("split", new Fields("word"));
-
-    Config conf = new Config();
-    conf.setDebug(true);
-
-
-    if (args != null && args.length > 0) {
-      conf.setNumWorkers(3);
-
-      StormSubmitter.submitTopologyWithProgressBar(args[0], conf, builder.createTopology());
-    }
-    else {
-      conf.setMaxTaskParallelism(3);
-
-      LocalCluster cluster = new LocalCluster();
-      cluster.submitTopology("word-count", conf, builder.createTopology());
-
-      Thread.sleep(10000);
-
-      cluster.shutdown();
-    }
-  }
 }
