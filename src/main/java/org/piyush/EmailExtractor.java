@@ -15,6 +15,6 @@ public class EmailExtractor extends BaseBasicBolt {
     public void execute(Tuple tuple, BasicOutputCollector outputCollector) {
         String commit = tuple.getStringByField("commit");
         String[] parts = commit.split(" ");
-        outputCollector.emit(new Values((parts[1])))
+        outputCollector.emit(new Values(parts[1]));
     }
 }
